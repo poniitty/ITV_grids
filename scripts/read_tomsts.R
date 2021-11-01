@@ -6,7 +6,7 @@ library(cowplot)
 library(zoo)
 
 # Set date limits to remove implausible dates
-mind <- "2021-07-15"
+mind <- "2021-07-16"
 maxd <- "2021-09-29"
 
 #################################################################################3
@@ -103,29 +103,7 @@ plots <- unique(df$plot)
 # Calculate different daily values for diagnostics
 df %>% mutate(date = as_date(datetime)) %>% 
   group_by(plot,date) %>% 
-  mutate(roll_diff_T1 = T1 - lead(T1),
-         roll_diff_T2 = T2 - lead(T2),
-         roll_diff_T3 = T3 - lead(T3)) %>%
-  summarise(soil_sd = sd(T1),
-            air_sd = sd(T3),
-            soil_mean = mean(T1),
-            air_mean = mean(T3),
-            soil_min = min(T1),
-            soil_max = max(T1),
-            surf_max = max(T2),
-            air_max = max(T3),
-            mean_diff = mean(abs(T3-T1)),
-            moist = min(moist),
-            corr = cor(T1,T3, use = "pairwise.complete.obs"),
-            max_diff_T1 = max(roll_diff_T1, na.rm = T),
-            max_diff_T2 = max(roll_diff_T2, na.rm = T),
-            max_diff_T3 = max(roll_diff_T3, na.rm = T)) %>% 
-  mutate(sa_diff = air_mean-soil_mean,
-         sa_max_diff = air_max-soil_max,
-         ss_max_diff = surf_max-soil_max) %>% 
-  mutate(sd_ratio = soil_sd/air_sd) %>% 
-  mutate(sd_ratio = ifelse(soil_sd < 1, 0, sd_ratio)) %>% 
-  mutate(corr = ifelse(is.na(corr), 0, corr)) %>% 
+  summarise(soil_mean = mean(T1)) %>% 
   as.data.frame() -> df2
 
 # create column for error codes
@@ -206,8 +184,8 @@ for(plotid in plots){
 df2 %>% 
   mutate(probl = ifelse(date <= "2021-07-13", 2, probl),
          probl = ifelse(date >= "2021-10-01", 2, probl)) %>% 
-  mutate(probl = ifelse(date %in% c("2021-07-14","2021-07-15"), 1, probl),
-         probl = ifelse(date %in% c("2021-09-29","2021-09-30"), 1, probl)) -> df2
+  mutate(probl = ifelse(date %in% as_date(as_date("2021-07-14"):as_date("2021-07-15")), 1, probl),
+         probl = ifelse(date %in% as_date(as_date("2021-09-29"):as_date("2021-09-30")), 1, probl)) -> df2
 
 # plot = F11
 plotid <- "F11"
@@ -432,6 +410,8 @@ round2 <- function(x) round(x,2)
 
 dfc %>% mutate(across(T1:T3, round2)) %>% 
   select(plot, datetime, T1, T2, T3, moist, moist_count, probl) -> dfc
+
+dfc %>% filter(datetime >= mind & datetime < maxd) -> dfc
 
 fwrite(dfc, "data/tomst_data.csv")
 
