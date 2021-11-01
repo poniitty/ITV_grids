@@ -42,3 +42,30 @@ d1 %>% select(-TMS) %>%
   select(plot, species, individual, var, value) -> d2
 
 write_csv(d2, "data/heights.csv")
+
+# Combine heights with leaf traits
+
+d3 <- read_csv("data/ITV_leaf_traits.csv")
+
+d2 %>% filter(var != "vegetation_height") %>% 
+  mutate(plot = toupper(plot)) %>% 
+  pivot_wider(id_cols = plot:individual, names_from = var, values_from = value) %>% 
+  group_by(plot, species) %>% 
+  summarise(height_sd = sd(height),
+            height = mean(height),
+            flowers = mean(flowers)) -> d2
+
+
+d4 <- full_join(d3 %>% rename(plot = site) %>% select(-study_design,-year), 
+                d2 %>% rename(abbr = species)) %>% 
+  relocate(height, leaf_area, SLA, LDMC, .after = n_leaf) %>% 
+  filter(!is.na(species))
+
+d4 %>% group_by(species) %>% 
+  select(height:LDMC) %>% 
+  summarize(h_la = cor(height, leaf_area, use = "pairwise.complete.obs"),
+            sla_ldmc = cor(SLA, LDMC, use = "pairwise.complete.obs"),
+            h_sla = cor(height, SLA, use = "pairwise.complete.obs"),
+            la_ldmc = cor(leaf_area, LDMC, use = "pairwise.complete.obs"))
+
+write_csv(d4, "output/all_traits.csv")
