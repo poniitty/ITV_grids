@@ -433,7 +433,7 @@ round2 <- function(x) round(x,2)
 dfc %>% mutate(across(T1:T3, round2)) %>% 
   select(plot, datetime, T1, T2, T3, moist, moist_count, probl) -> dfc
 
-fwrite(dfc, "output/tomst_data.csv")
+fwrite(dfc, "data/tomst_data.csv")
 
 ####################################################################################
 # Test if the correction temperatures correlate with the field measurements
