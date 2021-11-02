@@ -23,7 +23,7 @@ d %>% select(plot, datetime, moist) %>%
 plots <- unique(d$plot)
 dates <- as_date(as_date(min(T1$datetime)):(as_date(max(T1$datetime)) - days(14)))
 
-reps <- 10
+reps <- 100
 
 imput_df <- tibble()
 for(i in 1:reps){
@@ -69,6 +69,9 @@ for(i in 1:reps){
                                  filter(as_date(datetime) %in% date_range) %>% pull(plot_id) %>% round(1)))
 
 }
+
+write_csv(imput_df, "data/imputing_tests.csv")
+imput_df <- read_csv("data/imputing_tests.csv")
 
 imput_df %>% mutate(T1_diff = abs(T1 - T1_imp),
                     T3_diff = abs(T3 - T3_imp),
