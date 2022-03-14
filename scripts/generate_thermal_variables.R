@@ -1,5 +1,4 @@
 library(tidyverse)
-library(missForest)
 library(lubridate)
 
 # Microclimate
@@ -72,5 +71,13 @@ daily %>%
 da <- full_join(dw, dd) %>% full_join(dm)
 summary(da)
 
-write_csv(da, "output/thermal_variables.csv")
+
+da <- da %>% 
+  mutate(grid = toupper(substr(plot, 1, 1)), 
+         plot = parse_number(plot),
+         id = paste0(grid, plot)) %>% 
+  relocate(c(id,grid,plot)) %>% 
+  arrange(grid, plot)
+
+da %>% write_csv("output/thermal_variables.csv")
 
