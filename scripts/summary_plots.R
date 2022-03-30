@@ -24,17 +24,22 @@ td$abbr<- recode_factor(td$abbr,
                         VACULI = "Vaccinium uliginosum",
                         VACVIT = "Vaccinium vitis-idaea")
 
+# give mroe informative trait names
+trait_names <- c(
+  `height` = "Plant height (cm)",
+  `leaf_area` = "Leaf area (mm^2)",
+  `SLA` = "Specific leaf area (mm^2/mg)",
+  `LDMC` = "Leaf dry matter content (mg/mg)"
+  
+)
+
 # plot
 p1 = td %>% select(id, abbr, height:LDMC) %>% 
-   rename("Plant height" = height,
-         "Leaf area" = leaf_area,
-          "Leaf dry matter content" = LDMC,
-          "Specific leaf area" = SLA) %>%
-  pivot_longer(cols = `Plant height`:`Leaf dry matter content`, names_to = "trait") %>% 
+  pivot_longer(cols = height:LDMC, names_to = "trait") %>% 
   ggplot(aes(y = value, x = abbr, fill = abbr, colour = abbr)) +
   geom_boxplot (notch=TRUE, notchwidth = 0.1, width=0.8, outlier.shape = NA, lwd=0.5, alpha=7/10) +
   geom_jitter(alpha = 0.3, width = 0.2, size = 2) +
-  facet_wrap(vars(trait), scales = "free_y") +
+  facet_wrap(vars(trait), scales = "free_y", labeller = as_labeller(trait_names)) +
   scale_fill_met_d("Hokusai3") +
   scale_colour_met_d("Hokusai3") +
   ylab("Trait value") +
