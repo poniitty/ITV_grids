@@ -1,3 +1,6 @@
+library(MetBrewer) # nice colour palettes. we use Hokusai3 for the species.
+library(patchwork) # for nicer plots
+library(cowplot) # for nicer plots
 library(tidyverse)
 library(lme4)
 library(broom)
@@ -18,6 +21,452 @@ rs <- read_csv("output/rs_variables.csv")
 d <- left_join(td, ed) %>% 
   left_join(., rs) %>% 
   filter(!is.na(species))
+
+# rename and reorder species: first the forbs, then the shrubs
+d$abbr<- recode_factor(d$abbr,
+                        BISVIV = "Bistorta vivipara",
+                        SOLVIR = "Solidago virgaurea",
+                        BETNAN = "Betula nana",
+                        VACMYR = "Vaccinium myrtillus",
+                        VACULI = "Vaccinium uliginosum",
+                        VACVIT = "Vaccinium vitis-idaea")
+
+# plot soil moisture (moist_mean) curves
+p_moi_hei = d %>% 
+  ggplot(aes(y = height, x = moist_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Plant height (cm)") +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_moi_lei = d %>% 
+  ggplot(aes(y = leaf_area, x = moist_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Leaf area "(mm^2))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_moi_ldmc = d %>% 
+  ggplot(aes(y = LDMC, x = moist_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Leaf dry matter content (mg/mg)") +
+  xlab("Soil moisture (VWC%)") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_moi_sla = d %>% 
+  ggplot(aes(y = SLA, x = moist_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Specific leaf area "(mm^2/mg))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_moi_sla_legend = d %>% 
+  ggplot(aes(y = SLA, x = moist_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Specific leaf area (mm^2/mg)") +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position="bottom",
+    legend.text = element_text(face = "italic")) +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+# now extract the legend
+legend <- get_legend(p_moi_sla_legend)
+plot(legend)
+
+#save figure
+dev.off()
+pdf(file="visuals/response_curves_moi.pdf", width = 7.48, height = 9.45)
+
+layout <- '
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+EEEE
+'
+
+wrap_plots(A = p_moi_hei,
+           B = p_moi_lei,
+           C = p_moi_ldmc,
+           D = p_moi_sla,
+           E = legend,
+           design = layout) +
+  theme(plot.tag = element_text(size = 8))
+
+dev.off()
+
+# plot snow melting day (scd) curves
+p_scd_hei = d %>% 
+  ggplot(aes(y = height, x = scd, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Plant height (cm)") +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_scd_lei = d %>% 
+  ggplot(aes(y = leaf_area, x = scd, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Leaf area "(mm^2))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_scd_ldmc = d %>% 
+  ggplot(aes(y = LDMC, x = scd, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Leaf dry matter content (mg/mg)") +
+  xlab("Snow melting day (DOY)") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_scd_sla = d %>% 
+  ggplot(aes(y = SLA, x = scd, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Specific leaf area "(mm^2/mg))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+#save figure
+dev.off()
+pdf(file="visuals/response_curves_scd.pdf", width = 7.48, height = 9.45)
+
+layout <- '
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+EEEE
+'
+
+wrap_plots(A = p_scd_hei,
+           B = p_scd_lei,
+           C = p_scd_ldmc,
+           D = p_scd_sla,
+           E = legend,
+           design = layout) +
+  theme(plot.tag = element_text(size = 8))
+
+dev.off()
+
+# plot air temperature (T3_mean) curves
+p_airT_hei = d %>% 
+  ggplot(aes(y = height, x = T3_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Plant height (cm)") +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_airT_lei = d %>% 
+  ggplot(aes(y = leaf_area, x = T3_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Leaf area "(mm^2))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_airT_ldmc = d %>% 
+  ggplot(aes(y = LDMC, x = T3_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Leaf dry matter content (mg/mg)") +
+  xlab("Air temperature (°C)") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_airT_sla = d %>% 
+  ggplot(aes(y = SLA, x = T3_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Specific leaf area "(mm^2/mg))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+#save figure
+dev.off()
+pdf(file="visuals/response_curves_airT.pdf", width = 7.48, height = 9.45)
+
+layout <- '
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+EEEE
+'
+
+wrap_plots(A = p_airT_hei,
+           B = p_airT_lei,
+           C = p_airT_ldmc,
+           D = p_airT_sla,
+           E = legend,
+           design = layout) +
+  theme(plot.tag = element_text(size = 8))
+
+dev.off()
+
+# plot soil temperature (T1_mean) curves
+p_soiT_hei = d %>% 
+  ggplot(aes(y = height, x = T1_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Plant height (cm)") +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_soiT_lei = d %>% 
+  ggplot(aes(y = leaf_area, x = T1_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Leaf area "(mm^2))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_soiT_ldmc = d %>% 
+  ggplot(aes(y = LDMC, x = T1_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Leaf dry matter content (mg/mg)") +
+  xlab("Soil temperature (°C)") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_soiT_sla = d %>% 
+  ggplot(aes(y = SLA, x = T1_mean, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Specific leaf area "(mm^2/mg))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+#save figure
+dev.off()
+pdf(file="visuals/response_curves_soiT.pdf", width = 7.48, height = 9.45)
+
+layout <- '
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+EEEE
+'
+
+wrap_plots(A = p_soiT_hei,
+           B = p_soiT_lei,
+           C = p_soiT_ldmc,
+           D = p_soiT_sla,
+           E = legend,
+           design = layout) +
+  theme(plot.tag = element_text(size = 8))
+
+dev.off()
+
+
+
+
+
 
 # moisture
 d %>% ggplot(aes(x = moist_mean, y = height))+
