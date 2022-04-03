@@ -18,11 +18,32 @@ p_moi = d %>% select(grid, col, row, moist_mean) %>%
   ggplot(aes(y = col, x = row, colour = moist_mean)) +
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_colour_met_c("Hokusai3") +
-  ggtitle("Soil moisture") +
+  scale_colour_viridis(option = "D", direction = -1) +
+  ggtitle("Soil\nmoisture") +
   ylab("") +
   xlab("") +
   labs(colour = "Soil moisture (VWC%)") +
+  guides(colour = guide_colourbar(title.position = "top")) +
+  theme_bw() +
+  theme(
+    aspect.ratio = 1,
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    strip.background = element_blank(),
+    strip.text.x = element_blank(),
+    legend.position="bottom")
+
+p_sno = d %>% select(grid, col, row, snow_depth) %>% 
+  ggplot(aes(y = col, x = row, colour = snow_depth)) +
+  geom_point(size =4) + 
+  facet_wrap(vars(grid), nrow = 6) +
+  scale_colour_viridis(option = "G", direction = -1) +
+  ggtitle("Snow\ndepth") +
+  ylab("") +
+  xlab("") +
+  labs(colour = "Snow depth (cm)") +
   guides(colour = guide_colourbar(title.position = "top")) +
   theme_bw() +
   theme(
@@ -39,9 +60,8 @@ p_scd = d %>% select(grid, col, row, scd) %>%
   ggplot(aes(y = col, x = row, colour = scd)) +
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_fill_met_c("Hokusai3") +
-  scale_colour_met_c("Hokusai3") +
-  ggtitle("Snow melting day") +
+  scale_colour_viridis(option = "G", direction = -1) +
+  ggtitle("Snow\nmelting day") +
   ylab("") +
   xlab("") +
   labs(colour = "Snow melting day (DOY)") +
@@ -61,9 +81,8 @@ p_airT = d %>% select(grid, col, row, T3_mean) %>%
   ggplot(aes(y = col, x = row, colour = T3_mean)) +
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_fill_met_c("Hokusai3") +
-  scale_colour_met_c("Hokusai3") +
-  ggtitle("Air temperature") +
+  scale_colour_viridis(option = "F", direction = -1) +
+  ggtitle("Air\ntemperature") +
   ylab("") +
   xlab("") +
   labs(colour = "Temperature (°C)") +
@@ -83,9 +102,8 @@ p_soiT = d %>% select(grid, col, row, T1_mean) %>%
   ggplot(aes(y = col, x = row, colour = T1_mean)) +
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_fill_met_c("Hokusai3") +
-  scale_colour_met_c("Hokusai3") +
-  ggtitle("Soil temperature") +
+  scale_colour_viridis(option = "F", direction = -1) +
+  ggtitle("Soil\ntemperature") +
   ylab("") +
   xlab("") +
   labs(colour = "Temperature (°C)") +
@@ -119,18 +137,20 @@ p_names = ggplot() +
 
 #save figure
 dev.off()
-pdf(file="visuals/map_environment.pdf", width = 7.48, height = 9.45)
+pdf(file="visuals/map_environment.pdf", width = 7.48, height = 8) #9.45
 
 layout <- '
-ABCDE
+ABCDEG
 '
 
 wrap_plots(A = p_names,
            B = p_moi,
-           C = p_scd,
-           D = p_airT,
-           E = p_soiT,
+           C = p_sno,
+           D = p_scd,
+           E = p_airT,
+           G = p_soiT,
            design = layout) +
   theme(plot.tag = element_text(size = 8))
 
 dev.off()
+
