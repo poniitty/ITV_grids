@@ -79,5 +79,13 @@ da <- da %>%
   relocate(c(id,grid,plot)) %>% 
   arrange(grid, plot)
 
+# Bind with snow depths
+
+sn <- read_csv2("data/field_data/ITV_grids_snow_depth.csv", col_names = F)
+names(sn) <- c("grid","plot","snow_depth")
+
+da <- full_join(da, sn) %>% 
+  relocate(snow_depth, .after = plot)
+
 da %>% write_csv("output/thermal_variables.csv")
 
