@@ -22,6 +22,15 @@ d <- left_join(td, ed) %>%
   left_join(., rs) %>% 
   filter(!is.na(species))
 
+# calculate mean values for relevant months
+d %>% 
+  rowwise() %>% 
+  mutate(moist_mean_7_8 = mean(c(moist_mean_7, moist_mean_8)),
+         T3_mean_7_8 = mean (c(T3_mean_7,T3_mean_8)),
+         T1_mean_7_8 = mean (c(T1_mean_7,T1_mean_8))) %>% 
+  relocate(c(moist_mean_7_8, T3_mean_7_8, T1_mean_7_8), .after = snow_depth) %>% 
+  ungroup() -> d
+
 # rename and reorder species: first the forbs, then the shrubs
 d$abbr<- recode_factor(d$abbr,
                         BISVIV = "Bistorta vivipara",
@@ -31,9 +40,9 @@ d$abbr<- recode_factor(d$abbr,
                         VACULI = "Vaccinium uliginosum",
                         VACVIT = "Vaccinium vitis-idaea")
 
-# plot soil moisture (moist_mean) curves
+# plot soil moisture (moist_mean_7_8) curves
 p_moi_hei = d %>% 
-  ggplot(aes(y = height, x = moist_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = height, x = moist_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -52,7 +61,7 @@ p_moi_hei = d %>%
     strip.text.x = element_blank())
 
 p_moi_lei = d %>% 
-  ggplot(aes(y = leaf_area, x = moist_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = leaf_area, x = moist_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -71,7 +80,7 @@ p_moi_lei = d %>%
     strip.text.x = element_blank())
 
 p_moi_ldmc = d %>% 
-  ggplot(aes(y = LDMC, x = moist_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = LDMC, x = moist_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -90,7 +99,7 @@ p_moi_ldmc = d %>%
     strip.text.x = element_blank())
 
 p_moi_sla = d %>% 
-  ggplot(aes(y = SLA, x = moist_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = SLA, x = moist_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -109,7 +118,7 @@ p_moi_sla = d %>%
     strip.text.x = element_blank())
 
 p_moi_sla_legend = d %>% 
-  ggplot(aes(y = SLA, x = moist_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = SLA, x = moist_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -151,6 +160,108 @@ wrap_plots(A = p_moi_hei,
            B = p_moi_lei,
            C = p_moi_ldmc,
            D = p_moi_sla,
+           E = legend,
+           design = layout) +
+  theme(plot.tag = element_text(size = 8))
+
+dev.off()
+
+# plot snow depth (snow_depth) curves
+p_sno_hei = d %>% 
+  ggplot(aes(y = height, x = snow_depth, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Plant height (cm)") +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_sno_lei = d %>% 
+  ggplot(aes(y = leaf_area, x = snow_depth, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Leaf area "(mm^2))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_sno_ldmc = d %>% 
+  ggplot(aes(y = LDMC, x = snow_depth, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab("Leaf dry matter content (mg/mg)") +
+  xlab("Snow depth (cm)") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+p_sno_sla = d %>% 
+  ggplot(aes(y = SLA, x = snow_depth, colour = abbr, fill = abbr)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = T) +
+  scale_fill_met_d("Hokusai3") +
+  scale_colour_met_d("Hokusai3") +
+  ylab(bquote("Specific leaf area "(mm^2/mg))) +
+  xlab("") +
+  labs(fill = "Species", colour = "Species") +
+  theme_classic() +
+  theme(
+    aspect.ratio = 1,
+    strip.background = element_blank(),
+    legend.position = "none") +
+  facet_wrap(vars(abbr), nrow = 6, scales = "free_y") +
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank())
+
+#save figure
+dev.off()
+pdf(file="visuals/response_curves_sno.pdf", width = 7.48, height = 9.45)
+
+layout <- '
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+ABCD
+EEEE
+'
+
+wrap_plots(A = p_sno_hei,
+           B = p_sno_lei,
+           C = p_sno_ldmc,
+           D = p_sno_sla,
            E = legend,
            design = layout) +
   theme(plot.tag = element_text(size = 8))
@@ -261,7 +372,7 @@ dev.off()
 
 # plot air temperature (T3_mean) curves
 p_airT_hei = d %>% 
-  ggplot(aes(y = height, x = T3_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = height, x = T3_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -280,7 +391,7 @@ p_airT_hei = d %>%
     strip.text.x = element_blank())
 
 p_airT_lei = d %>% 
-  ggplot(aes(y = leaf_area, x = T3_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = leaf_area, x = T3_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -299,7 +410,7 @@ p_airT_lei = d %>%
     strip.text.x = element_blank())
 
 p_airT_ldmc = d %>% 
-  ggplot(aes(y = LDMC, x = T3_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = LDMC, x = T3_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -318,7 +429,7 @@ p_airT_ldmc = d %>%
     strip.text.x = element_blank())
 
 p_airT_sla = d %>% 
-  ggplot(aes(y = SLA, x = T3_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = SLA, x = T3_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -363,7 +474,7 @@ dev.off()
 
 # plot soil temperature (T1_mean) curves
 p_soiT_hei = d %>% 
-  ggplot(aes(y = height, x = T1_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = height, x = T1_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -382,7 +493,7 @@ p_soiT_hei = d %>%
     strip.text.x = element_blank())
 
 p_soiT_lei = d %>% 
-  ggplot(aes(y = leaf_area, x = T1_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = leaf_area, x = T1_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -401,7 +512,7 @@ p_soiT_lei = d %>%
     strip.text.x = element_blank())
 
 p_soiT_ldmc = d %>% 
-  ggplot(aes(y = LDMC, x = T1_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = LDMC, x = T1_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
@@ -420,7 +531,7 @@ p_soiT_ldmc = d %>%
     strip.text.x = element_blank())
 
 p_soiT_sla = d %>% 
-  ggplot(aes(y = SLA, x = T1_mean, colour = abbr, fill = abbr)) +
+  ggplot(aes(y = SLA, x = T1_mean_7_8, colour = abbr, fill = abbr)) +
   geom_point() + 
   geom_smooth(method = "lm", se = T) +
   scale_fill_met_d("Hokusai3") +
