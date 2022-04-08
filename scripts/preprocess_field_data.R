@@ -41,7 +41,16 @@ d1 %>% select(-TMS) %>%
   arrange(plot, species, individual) %>% 
   select(plot, species, individual, var, value) -> d2
 
-write_csv(d2, "data/heights.csv")
+d2 %>% filter(species == "ALL") %>% 
+  rename(veg_median_h = value) %>% 
+  select(plot, veg_median_h) %>% 
+  mutate(plot = toupper(plot)) %>% 
+  write_csv("data/median_heights.csv")
+
+d2 %>% filter(species != "ALL") %>% 
+  pivot_wider(id_cols = plot:individual, names_from = var, values_from = value) %>% 
+  mutate(plot = toupper(plot)) %>% 
+  write_csv("data/heights.csv")
 
 # Combine heights with leaf traits
 
@@ -54,7 +63,6 @@ d2 %>% filter(var != "vegetation_height") %>%
   summarise(height_sd = sd(height),
             height = mean(height),
             flowers = mean(flowers)) -> d2
-
 
 d4 <- full_join(d3 %>% rename(plot = site) %>% select(-study_design,-year), 
                 d2 %>% rename(abbr = species)) %>% 
@@ -69,3 +77,16 @@ d4 %>% group_by(species) %>%
             la_ldmc = cor(leaf_area, LDMC, use = "pairwise.complete.obs"))
 
 write_csv(d4, "output/all_traits.csv")
+
+######################################################################################
+# LA
+
+d <- read_csv("../Fennoscandia_plant_traits/trait_data/Kilpis_all_leaf_areas.csv") %>% 
+  filter(substr(site, 2, 2) %in% (0:9)) %>% 
+  rename(leaf_area = Area,
+         plot = site)
+
+write_csv(d, "data/leaf_areas.csv")
+
+
+
