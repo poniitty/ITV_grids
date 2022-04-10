@@ -1,0 +1,49 @@
+Trait,Species,Type,n_obs,Estimate,Est.Error,Q2.5,Q97.5
+Height,Bistorta vivipara,fit_fixed,56,0.334,0.117,0.111,0.543
+Height,Bistorta vivipara,fit_total,56,0.42,0.082,0.241,0.558
+Height,Solidago virgaurea,fit_fixed,203,0.176,0.051,0.089,0.293
+Height,Solidago virgaurea,fit_total,203,0.538,0.042,0.449,0.61
+Height,Betula nana,fit_fixed,235,0.25,0.073,0.112,0.391
+Height,Betula nana,fit_total,235,0.71,0.024,0.655,0.751
+Height,Vaccinium myrtillus,fit_fixed,512,0.087,0.031,0.034,0.152
+Height,Vaccinium myrtillus,fit_total,512,0.611,0.022,0.566,0.65
+Height,Vaccinium uliginosum,fit_fixed,168,0.228,0.075,0.081,0.372
+Height,Vaccinium uliginosum,fit_total,168,0.568,0.042,0.476,0.638
+Height,Vaccinium vitis-idaea,fit_fixed,543,0.072,0.028,0.026,0.135
+Height,Vaccinium vitis-idaea,fit_total,543,0.582,0.022,0.536,0.622
+Leaf area,Bistorta vivipara,fit_fixed,52,0.295,0.121,0.072,0.528
+Leaf area,Bistorta vivipara,fit_total,52,0.431,0.078,0.26,0.564
+Leaf area,Solidago virgaurea,fit_fixed,202,0.134,0.048,0.047,0.23
+Leaf area,Solidago virgaurea,fit_total,202,0.611,0.035,0.534,0.67
+Leaf area,Betula nana,fit_fixed,492,0.1,0.043,0.03,0.198
+Leaf area,Betula nana,fit_total,492,0.521,0.023,0.472,0.564
+Leaf area,Vaccinium myrtillus,fit_fixed,1020,0.055,0.027,0.013,0.117
+Leaf area,Vaccinium myrtillus,fit_total,1020,0.501,0.017,0.465,0.533
+Leaf area,Vaccinium uliginosum,fit_fixed,344,0.215,0.073,0.078,0.357
+Leaf area,Vaccinium uliginosum,fit_total,344,0.606,0.018,0.568,0.638
+Leaf area,Vaccinium vitis-idaea,fit_fixed,1075,0.048,0.027,0.009,0.114
+Leaf area,Vaccinium vitis-idaea,fit_total,1075,0.44,0.019,0.401,0.476
+LDMC,Bistorta vivipara,fit_fixed,13,0.585,0.043,0.477,0.648
+LDMC,Bistorta vivipara,fit_total,13,0.585,0.043,0.477,0.648
+LDMC,Solidago virgaurea,fit_fixed,58,0.126,0.027,0.073,0.177
+LDMC,Solidago virgaurea,fit_total,58,0.217,0.026,0.169,0.269
+LDMC,Betula nana,fit_fixed,77,0.417,0.034,0.346,0.481
+LDMC,Betula nana,fit_total,77,0.421,0.032,0.355,0.48
+LDMC,Vaccinium myrtillus,fit_fixed,129,0.196,0.029,0.139,0.252
+LDMC,Vaccinium myrtillus,fit_total,129,0.259,0.029,0.201,0.317
+LDMC,Vaccinium uliginosum,fit_fixed,44,0.194,0.055,0.082,0.293
+LDMC,Vaccinium uliginosum,fit_total,44,0.325,0.047,0.236,0.425
+LDMC,Vaccinium vitis-idaea,fit_fixed,136,0.056,0.016,0.027,0.089
+LDMC,Vaccinium vitis-idaea,fit_total,136,0.077,0.013,0.053,0.105
+SLA,Bistorta vivipara,fit_fixed,13,0.815,0.026,0.752,0.854
+SLA,Bistorta vivipara,fit_total,13,0.815,0.026,0.752,0.854
+SLA,Solidago virgaurea,fit_fixed,58,0.117,0.036,0.049,0.185
+SLA,Solidago virgaurea,fit_total,58,0.264,0.031,0.2,0.323
+SLA,Betula nana,fit_fixed,77,0.213,0.046,0.124,0.305
+SLA,Betula nana,fit_total,77,0.308,0.035,0.237,0.376
+SLA,Vaccinium myrtillus,fit_fixed,129,0.248,0.026,0.193,0.296
+SLA,Vaccinium myrtillus,fit_total,129,0.257,0.029,0.198,0.312
+SLA,Vaccinium uliginosum,fit_fixed,44,0.235,0.02,0.196,0.275
+SLA,Vaccinium uliginosum,fit_total,44,0.365,0.029,0.305,0.421
+SLA,Vaccinium vitis-idaea,fit_fixed,135,0.033,0.016,0.008,0.067
+SLA,Vaccinium vitis-idaea,fit_total,135,0.065,0.016,0.036,0.1

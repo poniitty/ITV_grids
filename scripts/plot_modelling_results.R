@@ -162,4 +162,13 @@ ggsave("visuals/R2s.pdf",
        plot = gg3,
        width = 7.48, height = 4.8, device=cairo_pdf)
 
-
+# Table
+r2s %>% 
+  filter(type == "fit_total" | type == "fit_fixed") %>% 
+  relocate(trait, species, type, n_obs) %>% 
+  rename(Trait = trait,
+         Species = species,
+         Type = type) %>% 
+  arrange(Trait, Species, Type) %>% 
+  mutate(across(Estimate:Q97.5, ~round(.x, 3))) %>% 
+  write_csv("output/R2_table.csv")
