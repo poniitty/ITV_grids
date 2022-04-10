@@ -122,7 +122,7 @@ slp %>%
             lower = mean(.value < 0),
             higher = mean(.value > 0)) %>% 
   rowwise() %>% 
-  mutate(pers = max(lower,higher)) %>% 
+  mutate(pers = abs(lower-higher)) %>% 
   ungroup() %>% 
   select(-lower, -higher) %>% 
   mutate(Parameter = "β") %>% 
