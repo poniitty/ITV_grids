@@ -29,11 +29,11 @@ p_moi = d %>% select(grid, col, row, moist_mean_7_8) %>%
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
   scale_colour_viridis(option = "D", direction = -1) +
-  ggtitle("Soil\nmoisture") +
+  ggtitle("") +
   ylab("") +
   xlab("") +
-  labs(colour = "Soil moisture\n(VWC%)") +
-  guides(colour = guide_colourbar(title.position = "top")) +
+  labs(colour = "Soil\nmoisture\n(VWC%)") +
+  guides(colour = guide_colourbar(title.position = "top", barwidth = 4)) +
   theme_bw() +
   theme(
     aspect.ratio = 1,
@@ -49,12 +49,12 @@ p_sno = d %>% select(grid, col, row, snow_depth) %>%
   ggplot(aes(y = col, x = row, colour = snow_depth)) +
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_colour_viridis(option = "G", direction = -1) +
-  ggtitle("Snow\ndepth") +
+  scale_colour_viridis(option = "G", direction = 1) +
+  ggtitle("") +
   ylab("") +
   xlab("") +
-  labs(colour = "Snow depth\n(cm)") +
-  guides(colour = guide_colourbar(title.position = "top")) +
+  labs(colour = "Snow\ndepth\n(cm)") +
+  guides(colour = guide_colourbar(title.position = "top", barwidth = 4)) +
   theme_bw() +
   theme(
     aspect.ratio = 1,
@@ -70,12 +70,12 @@ p_scd = d %>% select(grid, col, row, scd) %>%
   ggplot(aes(y = col, x = row, colour = scd)) +
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_colour_viridis(option = "G", direction = -1) +
-  ggtitle("Snow\nmelting day") +
+  scale_colour_viridis(option = "G", direction = 1) +
+  ggtitle("") +
   ylab("") +
   xlab("") +
-  labs(colour = "Snow melting day\n(DOY)") +
-  guides(colour = guide_colourbar(title.position = "top")) +
+  labs(colour = "Snow\nmelting day\n(DOY)") +
+  guides(colour = guide_colourbar(title.position = "top", barwidth = 4)) +
   theme_bw() +
   theme(
     aspect.ratio = 1,
@@ -91,12 +91,12 @@ p_airT = d %>% select(grid, col, row, T3_mean_7_8) %>%
   ggplot(aes(y = col, x = row, colour = T3_mean_7_8)) +
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_colour_viridis(option = "F", direction = -1) +
-  ggtitle("Air\ntemperature") +
+  scale_colour_viridis(option = "F", direction = 1) +
+  ggtitle("") +
   ylab("") +
   xlab("") +
-  labs(colour = "Air temperature\n(°C)") +
-  guides(colour = guide_colourbar(title.position = "top")) +
+  labs(colour = "Air\ntemperaturen\n(°C)") +
+  guides(colour = guide_colourbar(title.position = "top", barwidth = 4)) +
   theme_bw() +
   theme(
     aspect.ratio = 1,
@@ -112,12 +112,12 @@ p_soiT = d %>% select(grid, col, row, T1_mean_7_8) %>%
   ggplot(aes(y = col, x = row, colour = T1_mean_7_8)) +
   geom_point(size =4) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_colour_viridis(option = "F", direction = -1) +
-  ggtitle("Soil\ntemperature") +
+  scale_colour_viridis(option = "F", direction = 1) +
+  ggtitle("") +
   ylab("") +
   xlab("") +
-  labs(colour = "Soil temperature\n(°C)") +
-  guides(colour = guide_colourbar(title.position = "top")) +
+  labs(colour = "Soil\ntemperature\n(°C)") +
+  guides(colour = guide_colourbar(title.position = "top", barwidth = 4)) +
   theme_bw() +
   theme(
     aspect.ratio = 1,
@@ -132,17 +132,17 @@ p_soiT = d %>% select(grid, col, row, T1_mean_7_8) %>%
 # plot grid names only
 p_names = ggplot() +
   annotate("text", x = 1, y =1.7, size = 3.5, fontface =2,
-           label = "Forest, poor") +
+           label = "Forest,\npoor") +
   annotate("text", x = 1, y =1.6, size = 3.5, fontface =2,
-           label = "Forest, rich") +
+           label = "Forest,\nrich") +
   annotate("text", x = 1, y =1.5, size = 3.5, fontface =2,
-           label = "Ecotone, poor") +
+           label = "Ecotone,\npoor") +
   annotate("text", x = 1, y =1.4, size = 3.5, fontface =2,
-           label = "Ecotone, rich") +
+           label = "Ecotone,\nrich") +
   annotate("text", x = 1, y =1.3, size = 3.5, fontface =2,
-           label = "Tundra, poor") +
+           label = "Tundra,\npoor") +
   annotate("text", x = 1, y =1.2, size = 3.5, fontface =2,
-           label = "Tundra, rich") +
+           label = "Tundra,\nrich") +
   theme_void()
 
 #save figure
