@@ -1,11 +1,9 @@
-library(brms)
 library(tidyverse)
-library(performance, lib.loc = "/projappl/project_2003061/Rpackages/")
 library(bayesplot)
 library(tidybayes, lib.loc = "/projappl/project_2003061/Rpackages/")
-library(posterior)
+library(Cairo)
 
-r2s <- read_csv("output/r2s_GAMMA.csv") %>% 
+r2s <- read_csv("output/r2s.csv") %>% 
   mutate(trait = factor(trait, 
                         levels = c("height","LA",
                                    "LDMC","SLA"), 
@@ -16,20 +14,23 @@ r2s <- read_csv("output/r2s_GAMMA.csv") %>%
                                      "VACMYR","VACULI","VACVIT"), 
                           labels = c("Bistorta vivipara", "Solidago virgaurea", "Betula nana",
                                      "Vaccinium myrtillus","Vaccinium uliginosum","Vaccinium vitis-idaea")))
-slp <- read_csv("output/slopes_GAMMA.csv") %>% 
+slp <- read_csv("output/slopes.csv") %>% 
   mutate(.variable = factor(.variable, 
                             levels = c("b_moist_mean_7_8","b_snow_depth","b_scd",
                                        "b_T3_mean_7_8","b_T1_mean_7_8"), 
-                            labels = c("Soil moist.", "Snow depth", "Snow melt",
+                            labels = c("Soil moisture", "Snow depth", "Snow melt.",
                                        "Air temp.","Soil temp."))) %>% 
   mutate(trait = factor(trait, 
                         levels = c("height","LA",
                                    "LDMC","SLA"), 
-                        labels = c("Height","Leaf area",
+                        labels = c("Plant height","Leaf area",
                                    "LDMC","SLA"))) %>% 
   mutate(species = factor(species, 
                           levels = c("BISVIV","SOLVIR","BETNAN",
-                                     "VACMYR","VACULI","VACVIT")))
+                                     "VACMYR","VACULI","VACVIT"), 
+                          labels = c("Bistorta vivipara","Solidago virgaurea",
+                                     "Betula nana","Vaccinium myrtillus",
+                                     "Vaccinium uliginosum","Vaccinium vitis-idaea")))
 
 # Effects / slope parameters
 
@@ -44,49 +45,122 @@ gg2 <- slp %>%
   left_join(., sgnfs) %>% 
   mutate(sgnf = factor(sgnf)) %>% 
   ggplot(aes(y = species, x = .value, color = sgnf)) +
-  stat_pointinterval(point_size = 1.5) +
-  scale_color_manual(values = c("blue","gray","red")) +
-  geom_vline(xintercept = c(0), linetype = "dashed", color = "gray") +
+  geom_vline(xintercept = c(0), color = "grey20", size = 0.3) +
+  stat_pointinterval(fatten_point = 1, interval_size_range = c(0.5,1)) +
+  scale_color_manual(values = c("#1d5087","lightgrey","#4dccc3")) +
   theme_ggdist() + ylab(NULL) + xlab("β") +
   theme(legend.position = "none") +
   facet_grid(.variable ~ trait, scales = "free") +
   scale_y_discrete(limits=rev) +
-  theme(panel.spacing.y = unit(1, "lines"))
+  theme(panel.spacing.y = unit(1, "lines"),
+        # aspect.ratio = 1,
+        axis.text.y = element_text(face = "italic", size = 8),
+        axis.text.x = element_text(size = 8),
+        axis.title.x = element_text(face = "italic"),
+        strip.background = element_rect(fill = "ghostwhite"))
 
-ggsave("visuals/slopes.pdf", plot = gg2, width = 20, height = 15, units = "cm")
-ggsave("visuals/slopes.png", plot = gg2, width = 20, height = 15, units = "cm")
+ggsave("visuals/slopes.pdf",
+       plot = gg2,
+       width = 7.48, height = 6, device=cairo_pdf)
 
 gg1 <- slp %>%
   left_join(., sgnfs) %>%  
   mutate(sgnf = factor(sgnf)) %>% 
   ggplot(aes(y = .variable, x = .value, color = sgnf)) +
-  stat_pointinterval(point_size = 1.5) +
-  scale_color_manual(values = c("blue","gray","red")) +
-  geom_vline(xintercept = c(0), linetype = "dashed", color = "gray") +
+  geom_vline(xintercept = c(0), color = "grey20", size = 0.3) +
+  stat_pointinterval(fatten_point = 1, interval_size_range = c(0.5,1)) +
+  scale_color_manual(values = c("#1d5087","lightgrey","#4dccc3")) +
   theme_ggdist() + ylab(NULL) + xlab("β") +
   theme(legend.position = "none") +
-  facet_grid(species ~ trait, scales = "free") +
+  facet_grid(species ~ trait, scales = "free", labeller = label_wrap_gen(11)) +
   scale_y_discrete(limits=rev) +
-  theme(panel.spacing.y = unit(1, "lines"))
+  theme(panel.spacing.y = unit(0.8, "lines"),
+        # aspect.ratio = 1,
+        axis.text.y = element_text(size = 8),
+        strip.text.y = element_text(face = "italic", size = 9),
+        axis.text.x = element_text(size = 8),
+        axis.title.x = element_text(face = "italic"),
+        strip.background = element_rect(fill = "ghostwhite"))
 
-ggsave("visuals/slopes_by_species.pdf", plot = gg1, width = 20, height = 15, units = "cm")
-ggsave("visuals/slopes_by_species.png", plot = gg1, width = 20, height = 15, units = "cm")
+ggsave("visuals/slopes_by_species.pdf",
+      plot = gg1,
+      width = 7.48, height = 6, device=cairo_pdf)
 
+
+# TABLE OF POSTERIOR SAMPLES
+
+slp <- read_csv("output/slopes.csv") %>% 
+  mutate(.variable = factor(.variable, 
+                            levels = c("b_moist_mean_7_8","b_snow_depth","b_scd",
+                                       "b_T3_mean_7_8","b_T1_mean_7_8"), 
+                            labels = c("Soil moisture", "Snow depth", "Snow melting day",
+                                       "Air temperature","Soil temperature"))) %>% 
+  mutate(trait = factor(trait, 
+                        levels = c("height","LA",
+                                   "LDMC","SLA"), 
+                        labels = c("Plant height","Leaf area",
+                                   "LDMC","SLA"))) %>% 
+  mutate(species = factor(species, 
+                          levels = c("BISVIV","SOLVIR","BETNAN",
+                                     "VACMYR","VACULI","VACVIT"), 
+                          labels = c("Bistorta vivipara","Solidago virgaurea",
+                                     "Betula nana","Vaccinium myrtillus",
+                                     "Vaccinium uliginosum","Vaccinium vitis-idaea")))
+
+
+sgnfs <- slp %>% 
+  group_by(trait, species, .variable) %>% 
+  summarise(l95 = median(.value)) %>% 
+  mutate(sgnf = ifelse(l95 > 0, 1, 0),
+         sgnf = ifelse(u95 < 0, -1, sgnf))
+
+slp %>% 
+  group_by(.variable, trait, species) %>% 
+  summarise(Median = median(.value),
+            `Lower_95%` = quantile(.value, probs = 0.025),
+            `Upper_95%` = quantile(.value, probs = 0.975),
+            lower = mean(.value < 0),
+            higher = mean(.value > 0)) %>% 
+  rowwise() %>% 
+  mutate(pers = abs(lower-higher)) %>% 
+  ungroup() %>% 
+  select(-lower, -higher) %>% 
+  mutate(Parameter = "β") %>% 
+  relocate(Parameter, .after = species) %>% 
+  relocate(trait) %>% 
+  rename(Predictor = .variable,
+         Trait = trait,
+         Species = species) %>% 
+  arrange(Trait, Predictor, Species) %>% 
+  mutate(across(Median:pers, ~round(.x, 4))) %>% 
+  write_csv("output/Model_parameters_summary_table.csv")
+
+######################
 # R2
 
 gg3 <- r2s %>% 
   filter(type == "fit_fixed") %>% 
   ggplot(aes(x = trait, y = Estimate)) +
-  geom_hline(yintercept = c(0), color = "black") +
-  geom_hline(yintercept = c(0.25, 0.5, 0.75), linetype = "dashed", color = "black", size = 0.2) +
+  geom_hline(yintercept = c(0), color = "grey") +
+  geom_hline(yintercept = c(0.25, 0.5, 0.75), linetype = "dashed", color = "grey", size = 0.2) +
   geom_crossbar(aes(ymin = Q2.5, ymax = Q97.5),
-                fill = "gray90", fatten = 0, width = 0.2) + 
-  geom_point(size = 2) +
-  facet_wrap(vars(species)) +
+                fill = "#4597c7", colour=NA, fatten = 0, width = 0.2) + 
+  geom_point(size = 2, colour="#002b58") +
+  facet_wrap(vars(species), nrow=2) +
   theme_ggdist() +
-  geom_text(aes(label=n_obs, y = 1), vjust=0.15, size = 3) +
+  geom_text(aes(label=n_obs, y = 1), vjust=1, size=3) +
   ylab(bquote(R^2)) + xlab(NULL) +
-  theme(strip.text = element_text(face = "italic"))
+  theme(strip.text = element_text(face = "italic"),
+        strip.background = element_rect(fill = "ghostwhite"))
 
-ggsave("visuals/R2s.pdf", plot = gg3, width = 20, height = 14, units = "cm")
-ggsave("visuals/R2s.png", plot = gg3, width = 20, height = 14, units = "cm")
+ggsave("visuals/R2s.pdf",
+      plot = gg3,
+      width = 7.48, height = 4.45, device=cairo_pdf)
+
+dev.off()
+pdf(file="visuals/R2s.pdf", width = 7.48, height = 9.45)
+gg3 + theme(plot.tag = element_text(size = 8))
+dev.off()
+png(file="visuals/R2s.png", width = 7.48, height = 9.45, units = "in")
+gg3 + theme(plot.tag = element_text(size = 8))
+dev.off()
