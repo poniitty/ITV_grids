@@ -139,28 +139,27 @@ slp %>%
 # R2
 
 gg3 <- r2s %>% 
-  filter(type == "fit_fixed") %>% 
-  ggplot(aes(x = trait, y = Estimate)) +
+  filter(type == "fit_total" | type == "fit_fixed") %>% 
+  ggplot(aes(x = trait, y = Estimate, group = type, fill = type)) +
   geom_hline(yintercept = c(0), color = "grey") +
   geom_hline(yintercept = c(0.25, 0.5, 0.75), linetype = "dashed", color = "grey", size = 0.2) +
   geom_crossbar(aes(ymin = Q2.5, ymax = Q97.5),
-                fill = "#4597c7", colour=NA, fatten = 0, width = 0.2) + 
-  geom_point(size = 2, colour="#002b58") +
+                colour=NA, fatten = 0, width = 0.2,
+                position = position_dodge(width=0.35)) + 
+  geom_point(size = 2, colour="#002b58", position = position_dodge(width=0.35)) +
+  scale_fill_manual(values = c("#1d5087","#4dccc3"),
+                    labels = c("Fixed effects", "Fixed + random effects")) +
   facet_wrap(vars(species), nrow=2) +
   theme_ggdist() +
   geom_text(aes(label=n_obs, y = 1), vjust=1, size=3) +
   ylab(bquote(R^2)) + xlab(NULL) +
   theme(strip.text = element_text(face = "italic"),
-        strip.background = element_rect(fill = "ghostwhite"))
-
+        strip.background = element_rect(fill = "ghostwhite"),
+        legend.position = "bottom",
+        legend.title = element_blank())
+gg3
 ggsave("visuals/R2s.pdf",
-      plot = gg3,
-      width = 7.48, height = 4.45, device=cairo_pdf)
+       plot = gg3,
+       width = 7.48, height = 4.8, device=cairo_pdf)
 
-dev.off()
-pdf(file="visuals/R2s.pdf", width = 7.48, height = 9.45)
-gg3 + theme(plot.tag = element_text(size = 8))
-dev.off()
-png(file="visuals/R2s.png", width = 7.48, height = 9.45, units = "in")
-gg3 + theme(plot.tag = element_text(size = 8))
-dev.off()
+
