@@ -27,9 +27,9 @@ td$abbr<- recode_factor(td$abbr,
 # give mroe informative trait names
 trait_names <- c(
   `height` = "Plant height (cm)",
-  `leaf_area` = "Leaf area (mm^2)",
-  `SLA` = "Specific leaf area (mm^2/mg)",
-  `LDMC` = "Leaf dry matter content (mg/mg)"
+  `leaf_area` = "Leaf area (cm^2)",
+  `SLA` = "Specific leaf area (cm^2/g)",
+  `LDMC` = "Leaf dry matter content (g/g)"
   
 )
 
@@ -51,6 +51,7 @@ p1 = td %>% select(id, abbr, height:LDMC) %>%
     axis.text.x = element_blank(),
     axis.ticks.x = element_blank(),
     strip.background = element_blank(),
+    strip.text.x = element_text(size = 12),
     legend.position="bottom",
     legend.text = element_text(face = "italic"))
 
