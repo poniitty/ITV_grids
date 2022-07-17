@@ -54,7 +54,11 @@ d2 %>% filter(species != "ALL") %>%
 
 # Combine heights with leaf traits
 
-d3 <- read_csv("data/ITV_leaf_traits.csv")
+d3 <- read_csv("data/ITV_leaf_traits.csv") %>% 
+  mutate(leaf_area = leaf_area*100,
+         total.leaf.area = total.leaf.area*100,
+         sd_la_filt = sd_la_filt*100,
+         SLA = SLA/10) # To the same units as in TRY data
 
 d2 %>% filter(var != "vegetation_height") %>% 
   mutate(plot = toupper(plot)) %>% 
@@ -84,7 +88,8 @@ write_csv(d4, "output/all_traits.csv")
 d <- read_csv("../Fennoscandia_plant_traits/trait_data/Kilpis_all_leaf_areas.csv") %>% 
   filter(substr(site, 2, 2) %in% (0:9)) %>% 
   rename(leaf_area = Area,
-         plot = site)
+         plot = site) %>% 
+  mutate(leaf_area = leaf_area*100)
 
 write_csv(d, "data/leaf_areas.csv")
 
