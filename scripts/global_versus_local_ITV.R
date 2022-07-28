@@ -78,7 +78,7 @@ dd <- bind_rows(d, dd)
 dd <- dd %>% 
   mutate(trait = factor(trait, levels = c("height","leaf_area","LDMC","SLA"),
                         labels = c("Plant~height~(cm)",
-                                   "Leaf~area~(mm^{2})",
+                                   "log(Leaf~area)",
                                    "Leaf~dry~matter~content~(g/g)",
                                    "Specific~leaf~area~(mm^{2}/mg)")))
 
@@ -135,7 +135,17 @@ dd %>%
     legend.position="bottom",
     legend.text = element_text(face = "italic"))
 
-dd %>% 
+levels(dd$trait)
+
+dd %>%
+  mutate(value = ifelse(trait == "log(Leaf~area)", log(value), value)) %>% 
+  filter(trait == "log(Leaf~area)") %>% 
+  summary()
+
+perce <- perce %>% 
+  mutate(maxv = ifelse(trait == "log(Leaf~area)", 8.9, maxv))
+
+p1 = dd %>% 
   arrange(species, scale) %>% 
   mutate(inter = paste(species, scale, sep = "_")) %>% 
   mutate(inter = factor(inter, levels = c("Bistorta vivipara_Global","Bistorta vivipara_Local",
@@ -145,6 +155,7 @@ dd %>%
                                           "Vaccinium uliginosum_Global","Vaccinium uliginosum_Local",
                                           "Vaccinium vitis-idaea_Global","Vaccinium vitis-idaea_Local"))) %>% 
   # left_join(., perse) %>% 
+  mutate(value = ifelse(trait == "log(Leaf~area)", log(value), value)) %>% 
   ggplot(aes(y = value, x = inter, fill = inter, colour = species)) +
   geom_half_boxplot(nudge = 0.12, outlier.color = NA, width=0.8, lwd=0.5, alpha=7/10) +
   geom_half_point(alpha = 0.3, size = 1.2) +
@@ -163,8 +174,31 @@ dd %>%
     axis.ticks.x = element_blank(),
     strip.background = element_blank(),
     strip.text.x = element_text(size = 12),
-    legend.position="bottom",
-    legend.text = element_text(face = "italic"))
+    legend.position="none")
+
+# plot area names only
+hok2
+
+p_names = ggplot() +
+  annotate("text", x = 1, y =1.6, size = 3.5, fontface ="bold.italic",
+           label = "Bistorta vivipara",
+           colour="#d8d97a") +
+  annotate("text", x = 1, y =1.5, size = 3.5, fontface ="bold.italic",
+           label = "Solidago virgaurea",
+           colour="#95c36e") +
+  annotate("text", x = 1, y =1.4, size = 3.5, fontface ="bold.italic",
+           label = "Betula nana",
+           colour="#74c8c3") +
+  annotate("text", x = 1, y =1.3, size = 3.5, fontface ="bold.italic",
+           label = "Vaccinium myrtillus",
+           colour="#5a97c1") +
+  annotate("text", x = 1, y =1.2, size = 3.5, fontface ="bold.italic",
+           label = "Vaccinium uliginosum",
+           colour="#295384") +
+  annotate("text", x = 1, y =1.1, size = 3.5, fontface ="bold.italic",
+           label = "Vaccinium vitis-idaea",
+           colour="#0a2e57") +
+  theme_void()
 
 dd %>% 
   group_by(trait) %>% 
@@ -185,3 +219,21 @@ dd %>%
   mutate(diff = round(Local/Global*100)) %>% 
   group_by(species) %>% 
   summarise(diff = mean(diff))
+
+# print pdf
+layout <- '
+A
+A
+A
+A
+B
+'
+
+dev.off()
+pdf(file="visuals/global_versus_local_ITV.pdf", width = 7.48, height = 7.48)
+
+wrap_plots(A = p1,
+           B = p_names, design = layout) +
+  theme(plot.tag = element_text(size = 8))
+
+dev.off()
