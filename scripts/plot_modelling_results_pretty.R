@@ -50,7 +50,7 @@ gg2 <- slp %>%
   mutate(sgnf = factor(sgnf)) %>% 
   ggplot(aes(y = species, x = .value, color = sgnf)) +
   stat_pointinterval(point_size = 1.5) +
-  scale_color_manual(values = c("#1d5087","lightgrey","#4dccc3")) +
+  scale_color_manual(values = c("deeppink","lightgrey","deeppink4")) +
   geom_vline(xintercept = c(0), linetype = "dashed", color = "grey") +
   theme_ggdist() + ylab(NULL) + xlab("β") +
   theme(legend.position = "none") +
@@ -77,7 +77,7 @@ gg1 <- slp %>%
   mutate(sgnf = factor(sgnf)) %>% 
   ggplot(aes(y = .variable, x = .value, color = sgnf)) +
   stat_pointinterval(point_size = 1.5) +
-  scale_color_manual(values = c("#1d5087","lightgrey","#4dccc3")) +
+  scale_color_manual(values = c("deeppink","lightgrey","deeppink4")) +
   geom_vline(xintercept = c(0), linetype = "dashed", color = "grey") +
   theme_ggdist() + ylab(NULL) + xlab("β") +
   theme(legend.position = "none") +
@@ -100,22 +100,25 @@ gg1 + theme(plot.tag = element_text(size = 8))
 dev.off()
 
 # R2
-
 gg3 <- r2s %>% 
-  filter(type == "fit_fixed") %>% 
-  ggplot(aes(x = trait, y = Estimate)) +
+  filter(type == "fit_total" | type == "fit_fixed") %>% 
+  ggplot(aes(x = trait, y = Estimate, group = type, fill = type)) +
   geom_hline(yintercept = c(0), color = "grey") +
   geom_hline(yintercept = c(0.25, 0.5, 0.75), linetype = "dashed", color = "grey", size = 0.2) +
   geom_crossbar(aes(ymin = Q2.5, ymax = Q97.5),
-                fill = "#4597c7", colour=NA, fatten = 0, width = 0.2) + 
-  geom_point(size = 2, colour="#002b58") +
+                colour=NA, fatten = 0, width = 0.2,
+                position = position_dodge(width=0.35)) + 
+  geom_point(size = 2, colour="black", position = position_dodge(width=0.35)) +
+  scale_fill_manual(values = c("magenta","mediumvioletred"),
+                    labels = c("Fixed effects", "Fixed + random effects")) +
   facet_wrap(vars(species), nrow=2) +
   theme_ggdist() +
   geom_text(aes(label=n_obs, y = 1), vjust=1, size=3) +
   ylab(bquote(R^2)) + xlab(NULL) +
-  theme(aspect.ratio = 1,
-        strip.text = element_text(face = "italic"),
-        strip.background = element_rect(fill = "ghostwhite"))
+  theme(strip.text = element_text(face = "italic"),
+        strip.background = element_rect(fill = "ghostwhite"),
+        legend.position = "bottom",
+        legend.title = element_blank())
 
 #ggsave("visuals/R2s.pdf", plot = gg3, width = 20, height = 14, units = "cm")
 #ggsave("visuals/R2s.png", plot = gg3, width = 20, height = 14, units = "cm")
@@ -127,3 +130,7 @@ pdf(file="visuals/RS2.pdf", width = 7.48, height = 9.45)
 gg3 + theme(plot.tag = element_text(size = 8))
 
 dev.off()
+
+gg1
+gg2
+gg3
