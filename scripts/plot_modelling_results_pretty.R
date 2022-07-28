@@ -109,7 +109,7 @@ gg3 <- r2s %>%
                 colour=NA, fatten = 0, width = 0.2,
                 position = position_dodge(width=0.35)) + 
   geom_point(size = 2, colour="black", position = position_dodge(width=0.35)) +
-  scale_fill_manual(values = c("magenta","mediumvioletred"),
+  scale_fill_manual(values = c("coral","mediumvioletred"),
                     labels = c("Fixed effects", "Fixed + random effects")) +
   facet_wrap(vars(species), nrow=2) +
   theme_ggdist() +
