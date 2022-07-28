@@ -26,9 +26,11 @@ d %>%
 # plot
 p_moi = d %>% select(grid, col, row, moist_mean_7_8) %>% 
   ggplot(aes(y = col, x = row, colour = moist_mean_7_8)) +
-  geom_point(size =4) + 
+  geom_point(size =4, shape=15) + 
   facet_wrap(vars(grid), nrow = 6) +
   scale_colour_viridis(option = "D", direction = -1) +
+  ylim(0.5,5.5) +
+  xlim(0.5,5.5) +
   ggtitle("") +
   ylab("") +
   xlab("") +
@@ -43,13 +45,17 @@ p_moi = d %>% select(grid, col, row, moist_mean_7_8) %>%
     axis.ticks.x = element_blank(),
     strip.background = element_blank(),
     strip.text.x = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
     legend.position="bottom")
 
 p_sno = d %>% select(grid, col, row, snow_depth) %>% 
   ggplot(aes(y = col, x = row, colour = snow_depth)) +
-  geom_point(size =4) + 
+  geom_point(size =4, shape=15) + 
   facet_wrap(vars(grid), nrow = 6) +
   scale_colour_viridis(option = "G", direction = 1) +
+  ylim(0.5,5.5) +
+  xlim(0.5,5.5) +
   ggtitle("") +
   ylab("") +
   xlab("") +
@@ -64,13 +70,17 @@ p_sno = d %>% select(grid, col, row, snow_depth) %>%
     axis.ticks.x = element_blank(),
     strip.background = element_blank(),
     strip.text.x = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
     legend.position="bottom")
 
 p_scd = d %>% select(grid, col, row, scd) %>% 
   ggplot(aes(y = col, x = row, colour = scd)) +
-  geom_point(size =4) + 
+  geom_point(size =4, shape=15) + 
   facet_wrap(vars(grid), nrow = 6) +
   scale_colour_viridis(option = "G", direction = 1) +
+  ylim(0.5,5.5) +
+  xlim(0.5,5.5) +
   ggtitle("") +
   ylab("") +
   xlab("") +
@@ -85,17 +95,21 @@ p_scd = d %>% select(grid, col, row, scd) %>%
     axis.ticks.x = element_blank(),
     strip.background = element_blank(),
     strip.text.x = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
     legend.position="bottom")
 
 p_airT = d %>% select(grid, col, row, T3_mean_7_8) %>% 
   ggplot(aes(y = col, x = row, colour = T3_mean_7_8)) +
-  geom_point(size =4) + 
+  geom_point(size =4, shape=15) + 
   facet_wrap(vars(grid), nrow = 6) +
-  scale_colour_viridis(option = "F", direction = 1) +
+  scale_colour_viridis(option = "F", direction = 1,breaks = c(10, 11)) +
+  ylim(0.5,5.5) +
+  xlim(0.5,5.5) +
   ggtitle("") +
   ylab("") +
   xlab("") +
-  labs(colour = "Air\ntemperaturen\n(°C)") +
+  labs(colour = "Air\ntemperature\n(°C)") +
   guides(colour = guide_colourbar(title.position = "top", barwidth = 4)) +
   theme_bw() +
   theme(
@@ -106,13 +120,17 @@ p_airT = d %>% select(grid, col, row, T3_mean_7_8) %>%
     axis.ticks.x = element_blank(),
     strip.background = element_blank(),
     strip.text.x = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
     legend.position="bottom")
 
 p_soiT = d %>% select(grid, col, row, T1_mean_7_8) %>% 
   ggplot(aes(y = col, x = row, colour = T1_mean_7_8)) +
-  geom_point(size =4) + 
+  geom_point(size =4, shape=15) + 
   facet_wrap(vars(grid), nrow = 6) +
   scale_colour_viridis(option = "F", direction = 1) +
+  ylim(0.5,5.5) +
+  xlim(0.5,5.5) +
   ggtitle("") +
   ylab("") +
   xlab("") +
@@ -127,6 +145,8 @@ p_soiT = d %>% select(grid, col, row, T1_mean_7_8) %>%
     axis.ticks.x = element_blank(),
     strip.background = element_blank(),
     strip.text.x = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
     legend.position="bottom")
 
 # plot grid names only
