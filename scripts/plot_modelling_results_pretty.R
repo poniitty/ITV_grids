@@ -1,4 +1,4 @@
-library(MetBrewer) # nice colour palettes
+# library(MetBrewer) # nice colour palettes
 library(patchwork) # for nicer plots
 #library(brms)
 library(tidyverse)
@@ -7,7 +7,7 @@ library(bayesplot)
 library(tidybayes)
 #library(posterior)
 
-r2s <- read_csv("E:/ARTIKKELIT/ARTIKKELI10/r2s_GAMMA.csv") %>% 
+r2s <- read_csv("output/r2s.csv") %>% 
   mutate(trait = factor(trait, 
                         levels = c("height","LA",
                                    "LDMC","SLA"), 
@@ -18,7 +18,7 @@ r2s <- read_csv("E:/ARTIKKELIT/ARTIKKELI10/r2s_GAMMA.csv") %>%
                                      "VACMYR","VACULI","VACVIT"), 
                           labels = c("Bistorta vivipara", "Solidago virgaurea", "Betula nana",
                                      "Vaccinium myrtillus","Vaccinium uliginosum","Vaccinium vitis-idaea")))
-slp <- read_csv("E:/ARTIKKELIT/ARTIKKELI10/slopes_GAMMA.csv") %>% 
+slp <- read_csv("output/slopes.csv") %>% 
   mutate(.variable = factor(.variable, 
                             levels = c("b_moist_mean_7_8","b_snow_depth","b_scd",
                                        "b_T3_mean_7_8","b_T1_mean_7_8"), 
@@ -66,7 +66,7 @@ gg2 <- slp %>%
 
 #save figure
 dev.off()
-pdf(file="visuals/slopes.pdf", width = 7.48, height = 9.45)
+pdf(file = "slopes.pdf", width = 7.48, height = 9.45)
 
 gg2 + theme(plot.tag = element_text(size = 8))
 
