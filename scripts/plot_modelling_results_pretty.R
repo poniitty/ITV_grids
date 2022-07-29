@@ -11,7 +11,7 @@ r2s <- read_csv("output/r2s.csv") %>%
   mutate(trait = factor(trait, 
                         levels = c("height","LA",
                                    "LDMC","SLA"), 
-                        labels = c("Plant height","Leaf area",
+                        labels = c("Height","Leaf area",
                                    "LDMC","SLA"))) %>% 
   mutate(species = factor(species, 
                           levels = c("BISVIV","SOLVIR","BETNAN",
@@ -22,8 +22,8 @@ slp <- read_csv("output/slopes.csv") %>%
   mutate(.variable = factor(.variable, 
                             levels = c("b_moist_mean_7_8","b_snow_depth","b_scd",
                                        "b_T3_mean_7_8","b_T1_mean_7_8"), 
-                            labels = c("Soil moisture", "Snow depth", "Snow melting day",
-                                       "Air temperature","Soil temperature"))) %>% 
+                            labels = c("Soil moisture", "Snow depth", "Snow melt.",
+                                       "Air temp.","Soil temp."))) %>% 
   mutate(trait = factor(trait, 
                         levels = c("height","LA",
                                    "LDMC","SLA"), 
@@ -57,7 +57,6 @@ gg2 <- slp %>%
   facet_grid(.variable ~ trait, scales = "free") +
   scale_y_discrete(limits=rev) +
   theme(panel.spacing.y = unit(1, "lines"),
-        aspect.ratio = 1,
         axis.text.y = element_text(face = "italic"),
         strip.background = element_rect(fill = "ghostwhite"))
 
@@ -66,9 +65,9 @@ gg2 <- slp %>%
 
 #save figure
 dev.off()
-pdf(file = "slopes.pdf", width = 7.48, height = 9.45)
+pdf(file = "visuals/slopes.pdf", width = 7.48, height = 6)
 
-gg2 + theme(plot.tag = element_text(size = 8))
+gg2
 
 dev.off()
 
@@ -81,10 +80,9 @@ gg1 <- slp %>%
   geom_vline(xintercept = c(0), linetype = "dashed", color = "grey") +
   theme_ggdist() + ylab(NULL) + xlab("β") +
   theme(legend.position = "none") +
-  facet_grid(species ~ trait, scales = "free") +
+  facet_grid(species ~ trait, scales = "free", labeller = labeller(species = label_wrap_gen(10))) +
   scale_y_discrete(limits=rev) +
   theme(panel.spacing.y = unit(1, "lines"),
-        aspect.ratio = 1,
         strip.text.y = element_text(face = "italic"),
         strip.background = element_rect(fill = "ghostwhite"))
 
@@ -93,9 +91,9 @@ gg1 <- slp %>%
 
 #save figure
 dev.off()
-pdf(file="visuals/slopes_byspecies.pdf", width = 7.48, height = 9.45)
+pdf(file="visuals/slopes_byspecies.pdf", width = 7.48, height = 6)
 
-gg1 + theme(plot.tag = element_text(size = 8))
+gg1
 
 dev.off()
 
@@ -115,7 +113,8 @@ gg3 <- r2s %>%
   theme_ggdist() +
   geom_text(aes(label=n_obs, y = 1), vjust=1, size=3) +
   ylab(bquote(R^2)) + xlab(NULL) +
-  theme(strip.text = element_text(face = "italic"),
+  theme(axis.text=element_text(size=9),
+        strip.text = element_text(face = "italic"),
         strip.background = element_rect(fill = "ghostwhite"),
         legend.position = "bottom",
         legend.title = element_blank())
@@ -125,9 +124,9 @@ gg3 <- r2s %>%
 
 #save figure
 dev.off()
-pdf(file="visuals/RS2.pdf", width = 7.48, height = 9.45)
+pdf(file="visuals/RS2.pdf", width = 7.48, height = 5)
 
-gg3 + theme(plot.tag = element_text(size = 8))
+gg3
 
 dev.off()
 
