@@ -1,3 +1,7 @@
+###########################################################################
+# Plots the variation in environmental variables in grids
+
+
 library(MetBrewer) # nice colour palettes. we use Hokusai3 for the species.
 library(patchwork) # for nicer plots
 library(tidyverse)

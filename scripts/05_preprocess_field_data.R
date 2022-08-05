@@ -1,3 +1,7 @@
+###########################################################################
+# Preprocess trait data
+
+
 library(tidyverse)
 
 d <- read_csv2("data/field_data/ITV_grids_heights.csv")

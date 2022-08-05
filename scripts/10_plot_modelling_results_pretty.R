@@ -1,11 +1,11 @@
-# library(MetBrewer) # nice colour palettes
+###########################################################################
+# Plot modelling results
+
+
 library(patchwork) # for nicer plots
-#library(brms)
 library(tidyverse)
-#library(performance)
 library(bayesplot)
 library(tidybayes)
-#library(posterior)
 
 r2s <- read_csv("output/r2s.csv") %>% 
   mutate(trait = factor(trait, 
@@ -129,7 +129,3 @@ pdf(file="visuals/RS2.pdf", width = 7.48, height = 5)
 gg3
 
 dev.off()
-
-gg1
-gg2
-gg3

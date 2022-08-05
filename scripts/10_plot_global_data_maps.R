@@ -1,3 +1,7 @@
+###########################################################################
+# Plot maps of the global data field locations
+
+
 library(sf)
 library(tidyverse)
 library(cowplot)

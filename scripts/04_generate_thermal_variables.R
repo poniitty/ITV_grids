@@ -1,3 +1,7 @@
+###########################################################################3
+# Generate thermal variables from logger data
+
+
 library(tidyverse)
 library(lubridate)
 

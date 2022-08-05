@@ -1,4 +1,7 @@
-# install.packages("tidybayes", lib = "/projappl/project_2003061/Rpackages/")
+###########################################################################
+# Student-T trait models
+
+
 library(brms)
 library(tidyverse)
 library(performance, lib.loc = "/projappl/project_2003061/Rpackages/")
@@ -13,7 +16,7 @@ if(!dir.exists("./models")){
 }
 
 ########################################################
-# GAUSSIAN MODELS, RESPONSES LOG-SCALED
+# STUDENT-T MODELS, RESPONSES LOG-SCALED
 
 warmup <- 4000
 iter   <- 8000 
@@ -25,7 +28,7 @@ thin <- 2
 adapt_delta <- 0.99
 max_treedepth <- 20
 logs <- c("height","leaf_area","LDMC","SLA")
-mod_family <- "gaussian"
+mod_family <- "student"
 
 
 ed <- read_csv("output/thermal_variables.csv")%>% 

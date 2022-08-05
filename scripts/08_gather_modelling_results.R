@@ -1,5 +1,6 @@
-############################################
-# Gather results
+####################################################################3
+# Gather results and plot model diagnostics
+
 
 library(brms)
 library(tidyverse)
